@@ -1,40 +1,57 @@
-# Brew3D Coffee Website
+# ☕ Brew3D Coffee Commerce Platform
 
-A full multi-page attractive 3D coffee website with backend.
+A full-stack, multi-page coffee commerce website with an interactive 3D-inspired frontend and a Node.js, Express, and MongoDB backend.
 
-## Pages
-- index.html
-- about.html
-- menu.html
-- services.html
-- booking.html
-- cart.html
-- contact.html
-- admin.html
+The project includes product browsing, booking, cart, contact, admin, and service pages, with a responsive visual design and animated coffee-themed experience.
 
-## Backend
-Node.js + Express + MongoDB.
+---
 
-## Run Backend
+## 🚀 Project Overview
 
-```bash
-cd backend
-npm install
-npm run dev
-```
+**Brew3D Coffee Commerce Platform** is a full-stack web application designed to simulate a modern coffee shop experience online.
 
-Open:
+The platform combines a visually engaging frontend with backend functionality for managing coffee-related business operations.
 
-```txt
-http://localhost:5000
-```
+The project demonstrates:
 
-## Important Video Step
+- Frontend development
+- Responsive web design
+- JavaScript interaction
+- REST-style backend development
+- MongoDB integration
+- Express.js API development
+- Full-stack project structure
 
-Add your own coffee video file here:
+---
 
-```txt
-assets/videos/coffee-bg.mp4
-```
+## ✨ Features
 
-The site still works without the video because it has an animated 3D CSS background fallback.
+- ☕ Interactive coffee-themed landing page
+- 🛍️ Coffee menu and product browsing
+- 🛒 Shopping cart interface
+- 📅 Table / service booking page
+- 📩 Contact form
+- 🧾 Services section
+- 👩‍💼 Admin page
+- 📱 Responsive multi-page design
+- 🎞️ Animated / 3D-inspired visual experience
+- 🌐 Node.js + Express backend
+- 🗄️ MongoDB database integration
+- 🔐 Environment-variable configuration
+- 🔄 CORS-enabled backend API
+
+---
+
+## 🖥️ Website Pages
+
+The application contains the following main pages:
+
+```text
+index.html
+about.html
+menu.html
+services.html
+booking.html
+cart.html
+contact.html
+admin.html
