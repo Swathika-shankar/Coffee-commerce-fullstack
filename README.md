@@ -55,6 +55,7 @@ booking.html
 cart.html
 contact.html
 admin.html
+```
 
 ---
 
@@ -80,3 +81,5 @@ admin.html
 
 ### 📩 Contact Page
 ![Contact Page](docs/screenshots/contact.png)
+
+---
