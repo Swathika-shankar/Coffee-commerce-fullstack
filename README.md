@@ -55,3 +55,28 @@ booking.html
 cart.html
 contact.html
 admin.html
+
+---
+
+## 📸 Project Screenshots
+
+### 🏠 Home Page
+![Swa Cafe Home Page](docs/screenshots/home-hero.png)
+
+### ✨ Home Features
+![Swa Cafe Home Features](docs/screenshots/home-features.png)
+
+### ☕ About Swa Cafe
+![About Swa Cafe](docs/screenshots/about-section.png)
+
+### 📋 Coffee Menu
+![Coffee Menu](docs/screenshots/menu-products.png)
+
+### 🚚 Services
+![Services](docs/screenshots/services.png)
+
+### 📅 Table Booking
+![Table Booking](docs/screenshots/booking.png)
+
+### 📩 Contact Page
+![Contact Page](docs/screenshots/contact.png)
