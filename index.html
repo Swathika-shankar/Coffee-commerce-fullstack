@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swa cafe| Home</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+</head>
+<body class="home-page">
+  <div class="cursor-glow"></div>
+  <header>
+    <div class="nav container">
+      <a href="index.html" class="logo"><i class="bx bxs-coffee"></i> Swa cafe</a>
+      <div class="navbar">
+        <a class="nav-link active" href="index.html">Home</a>
+<a class="nav-link " href="about.html">About</a>
+<a class="nav-link " href="menu.html">Menu</a>
+<a class="nav-link " href="services.html">Services</a>
+<a class="nav-link " href="booking.html">Book</a>
+<a class="nav-link " href="contact.html">Contact</a>
+<a class="nav-link " href="cart.html">Cart</a>
+<a class="nav-link " href="admin.html">Admin</a>
+      </div>
+      <div class="nav-icons">
+        <a href="cart.html" class="cart-link"><i class="bx bx-shopping-bag"></i><span class="cart-count">0</span></a>
+        <div class="menu-icon">
+          <div class="line1"></div><div class="line2"></div><div class="line3"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  
+<section class="hero-video">
+  <video autoplay muted loop playsinline class="bg-video" id="heroVideo">
+    <source src="assets/videos/home.mp4" type="video/mp4">
+  </video>
+    <button class="sound-btn" onclick="toggleVideoSound()">
+    
+  </button>
+  <div class="animated-bg">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero container">
+    <div class="hero-text reveal-left">
+      <span class="tag">Luxury Coffee Experience</span>
+      <h1>Welcome to <br><b>Swa cafe</b></h1>
+      <p><p>Luxury coffee crafted to perfection with fresh roasts, latte art, and premium café vibes.</p></p>
+      <div class="hero-buttons">
+        <a href="menu.html" class="btn"><span>Explore Menu</span><i class="bx bx-right-arrow-alt"></i></a>
+        <a href="booking.html" class="btn ghost"><span>Book Table</span><i class="bx bx-calendar"></i></a>
+      </div>
+    </div>
+    <div class="hero-3d-wrap reveal-right">
+      <div class="coffee-orbit">
+        <span>Latte</span><span>Mocha</span><span>Espresso</span>
+      </div>
+      <div class="hero-3d-card tilt-card">
+        <img src="assets/images/hero.png" alt="Coffee cup" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="quick-links container">
+  <a href="about.html" class="quick-card tilt-card"><i class="bx bx-info-circle"></i><h3>About Us</h3><p>Discover our coffee story.</p></a>
+  <a href="menu.html" class="quick-card tilt-card"><i class="bx bx-coffee"></i><h3>Menu</h3><p>Browse drinks and add to cart.</p></a>
+  <a href="services.html" class="quick-card tilt-card"><i class="bx bx-store"></i><h3>Services</h3><p>Delivery, takeaway, events.</p></a>
+  <a href="booking.html" class="quick-card tilt-card"><i class="bx bx-calendar-star"></i><h3>Booking</h3><p>Reserve your perfect table.</p></a>
+</section>
+
+<section class="ad-3d-section container">
+  <div class="ad-text">
+    <span class="tag">3D Coffee Advertisement</span>
+    <h2>Feel The Aroma Before You Taste It</h2>
+    <p>This section uses glassmorphism, 3D motion, floating coffee elements, and cinematic layout for an attractive ad feel.</p>
+    <a href="menu.html" class="btn"><span>Order Coffee</span><i class="bx bx-shopping-bag"></i></a>
+  </div>
+  <div class="ad-scene">
+    <div class="steam s1"></div>
+    <div class="steam s2"></div>
+    <div class="steam s3"></div>
+    <img src="assets/images/product-2.png" alt="3D coffee ad" class="ad-cup" />
+    <div class="bean bean1"></div>
+    <div class="bean bean2"></div>
+    <div class="bean bean3"></div>
+  </div>
+</section>
+
+<section class="featured container">
+  <div class="heading">
+    <span class="tag">Popular Menu</span>
+    <h2>Best Selling Coffee</h2>
+  </div>
+  <div class="product-grid home-products">
+    <div class="product-card tilt-card" data-name="Cappuccino" data-price="8" data-img="assets/images/product-1.png">
+      <i class="bx bx-heart heart-icon"></i><img src="assets/images/product-1.png"><p>Hot Coffee</p><h3>Cappuccino</h3><div><span>$8</span><button class="add-cart"><i class="bx bx-plus"></i></button></div>
+    </div>
+    <div class="product-card tilt-card" data-name="Latte" data-price="9" data-img="assets/images/product-2.png">
+      <i class="bx bx-heart heart-icon"></i><img src="assets/images/product-2.png"><p>Milk Coffee</p><h3>Latte</h3><div><span>$9</span><button class="add-cart"><i class="bx bx-plus"></i></button></div>
+    </div>
+    <div class="product-card tilt-card" data-name="Mocha" data-price="10" data-img="assets/images/product-4.png">
+      <i class="bx bx-heart heart-icon"></i><img src="assets/images/product-4.png"><p>Chocolate</p><h3>Mocha</h3><div><span>$10</span><button class="add-cart"><i class="bx bx-plus"></i></button></div>
+    </div>
+  </div>
+</section>
+
+<section class="video-promo container">
+  <div class="video-box">
+    <video autoplay muted loop playsinline id="promoVideo">
+       <source src="assets/videos/home.mp4" type="video/mp4"> 
+      </video>
+    <button class="sound-btn" onclick="togglePromoSound()">
+  🔇 Sound Off
+</button>
+  </div>
+  <div class="video-content">
+    <span class="tag">Swa Cafe</span>
+    <h2>Roasted Beans, Creamy Foam, Beautiful Moments</h2>
+    <p>At Swa Cafe, every cup is crafted with passion, premium beans, and artistic latte creations..</p>
+  </div>
+</section>
+
+
+  <footer class="footer container">
+    <div>
+      <a href="index.html" class="logo footer-logo"><i class="bx bxs-coffee"></i> Swa cafe</a>
+      <p>Experience the perfect blend of rich aromas, artisan coffee, and unforgettable moments at Swa Cafe</p>
+      <div class="social">
+        <a href="#"><i class="bx bxl-instagram"></i></a>
+        <a href="#"><i class="bx bxl-facebook"></i></a>
+        <a href="#"><i class="bx bxl-tiktok"></i></a>
+      </div>
+    </div>
+    <div>
+      <h3>Pages</h3>
+      <a href="about.html">About</a>
+      <a href="menu.html">Menu</a>
+      <a href="services.html">Services</a>
+      <a href="booking.html">Booking</a>
+    </div>
+    <div>
+      <h3>Support</h3>
+      <a href="contact.html">Contact</a>
+      <a href="cart.html">Cart</a>
+      <a href="admin.html">Admin</a>
+    </div>
+  </footer>
+  <p class="copyright">© 2026 Swa cafe. All Rights Reserved.</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://unpkg.com/scrollreveal"></script>
+  <script src="main.js"></script>
+</body>
+</html>
