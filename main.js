@@ -375,6 +375,72 @@ async function loadAdminBookings() {
     box.innerHTML = "<p>Backend not connected.</p>";
   }
 
+  async function loadAdminOrders() {
+  const box = document.querySelector(".admin-orders");
+  if (!box) return;
+
+  try {
+    const res = await fetch(`${API_URL}/orders`);
+    const orders = await res.json();
+
+    if (!orders.length) {
+      box.innerHTML = "<p>No orders yet.</p>";
+      return;
+    }
+
+    box.innerHTML = orders.map((order) => {
+      const items = order.items
+        .map(
+          (item) => `
+            <div class="admin-order-item">
+              <span>${item.name} × ${item.qty}</span>
+              <strong>$${(Number(item.price) * Number(item.qty)).toFixed(2)}</strong>
+            </div>
+          `
+        )
+        .join("");
+
+      return `
+        <div class="admin-order">
+
+          <div class="admin-order-header">
+            <div>
+              <strong>Order #${order._id.slice(-6).toUpperCase()}</strong>
+              <p>${new Date(order.createdAt).toLocaleString()}</p>
+            </div>
+
+            <span class="order-status">
+              ${order.status || "pending"}
+            </span>
+          </div>
+
+          <div class="admin-customer-details">
+            <p><strong>Customer:</strong> ${order.customer?.name || "N/A"}</p>
+            <p><strong>Email:</strong> ${order.customer?.email || "N/A"}</p>
+            <p><strong>Phone:</strong> ${order.customer?.phone || "N/A"}</p>
+            <p><strong>Address:</strong> ${order.customer?.address || "N/A"}</p>
+            <p><strong>Payment:</strong> ${order.paymentMethod || "N/A"}</p>
+          </div>
+
+          <div class="admin-order-items">
+            ${items}
+          </div>
+
+          <div class="admin-order-total">
+            Total:
+            <strong>$${Number(order.total || 0).toFixed(2)}</strong>
+          </div>
+
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Admin orders error:", error);
+    box.innerHTML = "<p>Unable to load orders.</p>";
+  }
+}
+
 }
 
 async function deleteBooking(id) {
@@ -436,6 +502,7 @@ function runCounters() {
 updateCartCount();
 renderCart();
 loadAdminBookings();
+loadAdminOrders();
 runCounters();
 
 function togglePromoSound() {

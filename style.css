@@ -1245,3 +1245,76 @@ font-weight: 700;
     flex-direction: column;
   }
 }
+/* ===============================
+   ADMIN ORDERS
+================================ */
+
+.admin-orders {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.admin-order {
+  padding: 1.5rem;
+  border-radius: 1.4rem;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(84, 55, 42, 0.12);
+}
+
+.admin-order-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-order-header p {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.order-status {
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(177, 120, 79, 0.15);
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.admin-customer-details {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.admin-order-items {
+  padding: 1rem 0;
+  border-top: 1px solid rgba(84, 55, 42, 0.1);
+  border-bottom: 1px solid rgba(84, 55, 42, 0.1);
+}
+
+.admin-order-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+}
+
+.admin-order-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .admin-order-header {
+    flex-direction: column;
+  }
+
+  .admin-order-item {
+    flex-direction: column;
+  }
+}
