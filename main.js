@@ -1,5 +1,5 @@
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://coffee-commerce-fullstack.onrender.com/api";
 
 const menu = document.querySelector(".menu-icon");
 const navbar = document.querySelector(".navbar");
@@ -370,3 +370,4 @@ function togglePromoSound() {
     video.play();
   }
 }
+
