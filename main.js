@@ -41,9 +41,9 @@ if (typeof ScrollReveal !== "undefined") {
 
   sr.reveal(".hero-text, .page-hero-content, .heading", { origin: "left" });
   sr.reveal(".hero-3d-wrap, .ad-scene, .booking-3d", { origin: "right" });
-  sr.reveal(".quick-card, .product-card, .service-card, .team-card, .glass-card, .split-img, .split-text", {
-    interval: 120,
-  });
+  sr.reveal(".quick-card, .product-card, .service-card, .team-card, .glass-card:not(.checkout-card), .split-img, .split-text", {
+   interval: 120,
+});
 }
 
 document.querySelectorAll(".tilt-card").forEach((card) => {
@@ -457,4 +457,5 @@ function togglePromoSound() {
     video.play();
   }
 }
+
 
