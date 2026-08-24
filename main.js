@@ -168,30 +168,139 @@ function renderCart() {
   });
 }
 
-document.querySelector(".checkout-btn")?.addEventListener("click", async () => {
+// ================================
+// CHECKOUT
+// ================================
+
+// Open checkout form
+document.querySelector(".checkout-btn")?.addEventListener("click", () => {
   const cart = getCart();
-  if (cart.length === 0) return showToast("Cart is empty");
+
+  if (cart.length === 0) {
+    return showToast("Cart is empty");
+  }
+
+  const checkoutSection = document.querySelector(".checkout-section");
+  const checkoutItems = document.querySelector(".checkout-items");
+  const checkoutTotal = document.querySelector(".checkout-total");
+
+  let total = 0;
+
+  checkoutItems.innerHTML = cart
+    .map((item) => {
+      const itemTotal = Number(item.price) * Number(item.qty);
+      total += itemTotal;
+
+      return `
+        <div class="checkout-item">
+          <div>
+            <strong>${item.name}</strong>
+            <p>${item.qty} × $${Number(item.price).toFixed(2)}</p>
+          </div>
+
+          <strong>$${itemTotal.toFixed(2)}</strong>
+        </div>
+      `;
+    })
+    .join("");
+
+  checkoutTotal.textContent = `$${total.toFixed(2)}`;
+
+  checkoutSection.style.display = "block";
+
+  checkoutSection.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+});
+
+
+// Place order
+document.querySelector(".checkout-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const form = e.target;
+  const message = document.querySelector(".checkout-message");
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  const cart = getCart();
+
+  if (cart.length === 0) {
+    showToast("Cart is empty");
+    return;
+  }
+
+  const formData = new FormData(form);
+
+  const customer = {
+    name: formData.get("name"),
+    email: formData.get("email"),
+    phone: formData.get("phone"),
+    address: formData.get("address"),
+  };
+
+  const paymentMethod = formData.get("paymentMethod");
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Placing Order...";
+
+  message.textContent = "";
 
   try {
     const res = await fetch(`${API_URL}/orders`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: cart }),
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        customer,
+        items: cart,
+        paymentMethod,
+      }),
     });
 
     const data = await res.json();
 
-    if (data.success) {
-      localStorage.removeItem("coffeeCart");
-      updateCartCount();
-      renderCart();
-      showToast("Order placed successfully");
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || "Order failed");
     }
+
+    // Clear cart after successful order
+    localStorage.removeItem("coffeeCart");
+
+    updateCartCount();
+    renderCart();
+
+    form.reset();
+
+    document.querySelector(".checkout-items").innerHTML = "";
+    document.querySelector(".checkout-total").textContent = "$0";
+
+    message.innerHTML = `
+      <strong>Order placed successfully! ☕</strong><br>
+      Thank you, ${customer.name}.<br>
+      Order ID: ${data.order._id}
+    `;
+
+    showToast("Order placed successfully");
+
   } catch (error) {
-    showToast("Backend not connected");
+    console.error("Checkout error:", error);
+
+    message.textContent =
+      error.message || "Unable to place order. Please try again.";
+
+    showToast("Order failed");
+
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Place Order";
   }
 });
 
+  
 document.querySelector(".booking-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -211,28 +320,6 @@ document.querySelector(".booking-form")?.addEventListener("submit", async (e) =>
     if (data.success) form.reset();
   } catch (error) {
     message.textContent = "Backend not connected. Start backend using npm run dev.";
-  }
-});
-
-document.querySelector(".contact-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const form = e.target;
-  const messageBox = form.querySelector(".form-message");
-  const message = Object.fromEntries(new FormData(form).entries());
-
-  try {
-    const res = await fetch(`${API_URL}/contacts`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(message),
-    });
-
-    const data = await res.json();
-    messageBox.textContent = data.success ? "Message sent successfully!" : "Message failed";
-    if (data.success) form.reset();
-  } catch (error) {
-    messageBox.textContent = "Backend not connected. Start backend using npm run dev.";
   }
 });
 
