@@ -1,5 +1,9 @@
 # ☕ Brew3D Coffee Commerce Platform
 
+## 🌐 Live Demo
+
+🚀 **[View Swa Cafe Live Website](https://swa-cafe-commerce.netlify.app/)**
+
 A full-stack, multi-page coffee commerce website with an interactive 3D-inspired frontend and a Node.js, Express, and MongoDB backend.
 
 The project includes product browsing, booking, cart, contact, admin, and service pages, with a responsive visual design and animated coffee-themed experience.
