@@ -1,10 +1,13 @@
-
 const API_URL = "https://coffee-commerce-fullstack.onrender.com/api";
 
 const menu = document.querySelector(".menu-icon");
 const navbar = document.querySelector(".navbar");
 const cartCount = document.querySelector(".cart-count");
 const cursorGlow = document.querySelector(".cursor-glow");
+
+// ================================
+// NAVIGATION
+// ================================
 
 if (menu && navbar) {
   menu.addEventListener("click", () => {
@@ -21,14 +24,25 @@ if (menu && navbar) {
 }
 
 window.addEventListener("scroll", () => {
-  document.querySelector("header")?.classList.toggle("scrolled", window.scrollY > 80);
+  document
+    .querySelector("header")
+    ?.classList.toggle("scrolled", window.scrollY > 80);
 });
+
+// ================================
+// CURSOR GLOW
+// ================================
 
 document.addEventListener("mousemove", (e) => {
   if (!cursorGlow) return;
+
   cursorGlow.style.left = `${e.clientX}px`;
   cursorGlow.style.top = `${e.clientY}px`;
 });
+
+// ================================
+// SCROLL REVEAL
+// ================================
 
 if (typeof ScrollReveal !== "undefined") {
   const sr = ScrollReveal({
@@ -39,21 +53,41 @@ if (typeof ScrollReveal !== "undefined") {
     reset: false,
   });
 
-  sr.reveal(".hero-text, .page-hero-content, .heading", { origin: "left" });
-  sr.reveal(".hero-3d-wrap, .ad-scene, .booking-3d", { origin: "right" });
-  sr.reveal(".quick-card, .product-card, .service-card, .team-card, .glass-card:not(.checkout-card), .split-img, .split-text", {
-   interval: 120,
-});
+  sr.reveal(".hero-text, .page-hero-content, .heading", {
+    origin: "left",
+  });
+
+  sr.reveal(".hero-3d-wrap, .ad-scene, .booking-3d", {
+    origin: "right",
+  });
+
+  sr.reveal(
+    ".quick-card, .product-card, .service-card, .team-card, .glass-card:not(.checkout-card), .split-img, .split-text",
+    {
+      interval: 120,
+    }
+  );
 }
+
+// ================================
+// TILT CARDS
+// ================================
 
 document.querySelectorAll(".tilt-card").forEach((card) => {
   card.addEventListener("mousemove", (e) => {
     const rect = card.getBoundingClientRect();
+
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
     const rotateY = ((x / rect.width) - 0.5) * 18;
     const rotateX = ((y / rect.height) - 0.5) * -18;
-    card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+
+    card.style.transform =
+      `perspective(900px) ` +
+      `rotateX(${rotateX}deg) ` +
+      `rotateY(${rotateY}deg) ` +
+      `translateY(-8px)`;
   });
 
   card.addEventListener("mouseleave", () => {
@@ -61,8 +95,17 @@ document.querySelectorAll(".tilt-card").forEach((card) => {
   });
 });
 
+// ================================
+// CART STORAGE
+// ================================
+
 function getCart() {
-  return JSON.parse(localStorage.getItem("coffeeCart")) || [];
+  try {
+    return JSON.parse(localStorage.getItem("coffeeCart")) || [];
+  } catch (error) {
+    console.error("Unable to read cart:", error);
+    return [];
+  }
 }
 
 function saveCart(cart) {
@@ -72,31 +115,59 @@ function saveCart(cart) {
 
 function updateCartCount() {
   const cart = getCart();
-  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-  if (cartCount) cartCount.textContent = totalQty;
+
+  const totalQty = cart.reduce(
+    (sum, item) => sum + Number(item.qty || 0),
+    0
+  );
+
+  document.querySelectorAll(".cart-count").forEach((element) => {
+    element.textContent = totalQty;
+  });
 }
+
+// ================================
+// ADD TO CART
+// ================================
 
 function addToCart(product) {
   const cart = getCart();
-  const existing = cart.find((item) => item.name === product.name);
+
+  const existing = cart.find(
+    (item) => item.name === product.name
+  );
 
   if (existing) {
-    existing.qty += 1;
+    existing.qty = Number(existing.qty || 0) + 1;
   } else {
-    cart.push({ ...product, qty: 1 });
+    cart.push({
+      ...product,
+      qty: 1,
+    });
   }
 
   saveCart(cart);
+  renderCart();
+
   showToast(`${product.name} added to cart`);
 }
 
+// ================================
+// TOAST MESSAGE
+// ================================
+
 function showToast(message) {
   const oldToast = document.querySelector(".toast");
-  if (oldToast) oldToast.remove();
+
+  if (oldToast) {
+    oldToast.remove();
+  }
 
   const toast = document.createElement("div");
+
   toast.className = "toast";
   toast.textContent = message;
+
   toast.style.cssText = `
     position: fixed;
     right: 24px;
@@ -109,420 +180,1008 @@ function showToast(message) {
     font-family: Poppins, sans-serif;
     box-shadow: 0 18px 40px rgba(0,0,0,.2);
   `;
+
   document.body.appendChild(toast);
 
-  setTimeout(() => toast.remove(), 2200);
+  setTimeout(() => {
+    toast.remove();
+  }, 2200);
 }
+
+// ================================
+// PRODUCT ADD-TO-CART BUTTONS
+// ================================
 
 document.querySelectorAll(".add-cart").forEach((btn) => {
   btn.addEventListener("click", () => {
     const card = btn.closest(".product-card");
+
+    if (!card) {
+      return;
+    }
+
     const product = {
       name: card.dataset.name,
       price: Number(card.dataset.price),
       img: card.dataset.img,
     };
+
     addToCart(product);
   });
 });
 
+// ================================
+// RENDER CART
+// ================================
+
 function renderCart() {
   const cartItems = document.querySelector(".cart-items");
   const cartTotal = document.querySelector(".cart-total");
-  if (!cartItems || !cartTotal) return;
+
+  // We are not on cart.html
+  if (!cartItems || !cartTotal) {
+    return;
+  }
 
   const cart = getCart();
 
   if (cart.length === 0) {
-    cartItems.innerHTML = `<div class="glass-card"><h2>Your cart is empty</h2><p>Add coffee from the menu page.</p></div>`;
-    cartTotal.textContent = "$0";
+    cartItems.innerHTML = `
+      <div class="glass-card">
+        <h2>Your cart is empty</h2>
+        <p>Add coffee from the menu page.</p>
+      </div>
+    `;
+
+    cartTotal.textContent = "$0.00";
+
     return;
   }
 
   let total = 0;
 
-  cartItems.innerHTML = cart.map((item, index) => {
-    total += item.price * item.qty;
-    return `
-      <div class="cart-item">
-        <img src="${item.img}" alt="${item.name}">
-        <div>
-          <h3>${item.name}</h3>
-          <p>$${item.price} × ${item.qty}</p>
+  cartItems.innerHTML = cart
+    .map((item, index) => {
+      const price = Number(item.price || 0);
+      const qty = Number(item.qty || 1);
+      const itemTotal = price * qty;
+
+      total += itemTotal;
+
+      return `
+        <div class="cart-item">
+
+          <img
+            src="${item.img}"
+            alt="${item.name}"
+          >
+
+          <div class="cart-item-info">
+            <h3>${item.name}</h3>
+
+            <p>
+              $${price.toFixed(2)} × ${qty}
+            </p>
+
+            <strong>
+              $${itemTotal.toFixed(2)}
+            </strong>
+          </div>
+
+          <button
+            type="button"
+            class="remove-item"
+            data-index="${index}"
+          >
+            Remove
+          </button>
+
         </div>
-        <button class="remove-item" data-index="${index}">Remove</button>
-      </div>
-    `;
-  }).join("");
+      `;
+    })
+    .join("");
 
-  cartTotal.textContent = `$${total}`;
+  cartTotal.textContent = `$${total.toFixed(2)}`;
 
+  // Remove buttons
   document.querySelectorAll(".remove-item").forEach((btn) => {
     btn.addEventListener("click", () => {
       const index = Number(btn.dataset.index);
-      const cart = getCart();
-      cart.splice(index, 1);
-      saveCart(cart);
+
+      const updatedCart = getCart();
+
+      updatedCart.splice(index, 1);
+
+      saveCart(updatedCart);
+
       renderCart();
     });
   });
 }
 
 // ================================
-// CHECKOUT
+// OPEN CHECKOUT
 // ================================
 
-// Open checkout form
-document.querySelector(".checkout-btn")?.addEventListener("click", () => {
-  const cart = getCart();
+document
+  .querySelector(".checkout-btn")
+  ?.addEventListener("click", () => {
+    const cart = getCart();
 
-  if (cart.length === 0) {
-    return showToast("Cart is empty");
-  }
+    if (cart.length === 0) {
+      showToast("Cart is empty");
+      return;
+    }
 
-  const checkoutSection = document.querySelector(".checkout-section");
-  const checkoutItems = document.querySelector(".checkout-items");
-  const checkoutTotal = document.querySelector(".checkout-total");
+    const checkoutSection =
+      document.querySelector(".checkout-section");
 
-  let total = 0;
+    const checkoutItems =
+      document.querySelector(".checkout-items");
 
-  checkoutItems.innerHTML = cart
-    .map((item) => {
-      const itemTotal = Number(item.price) * Number(item.qty);
-      total += itemTotal;
+    const checkoutTotal =
+      document.querySelector(".checkout-total");
 
-      return `
-        <div class="checkout-item">
-          <div>
-            <strong>${item.name}</strong>
-            <p>${item.qty} × $${Number(item.price).toFixed(2)}</p>
+    if (
+      !checkoutSection ||
+      !checkoutItems ||
+      !checkoutTotal
+    ) {
+      console.error("Checkout HTML elements not found.");
+      showToast("Checkout section unavailable");
+      return;
+    }
+
+    let total = 0;
+
+    checkoutItems.innerHTML = cart
+      .map((item) => {
+        const price = Number(item.price || 0);
+        const qty = Number(item.qty || 1);
+
+        const itemTotal = price * qty;
+
+        total += itemTotal;
+
+        return `
+          <div class="checkout-item">
+
+            <div>
+              <strong>${item.name}</strong>
+
+              <p>
+                ${qty} × $${price.toFixed(2)}
+              </p>
+            </div>
+
+            <strong>
+              $${itemTotal.toFixed(2)}
+            </strong>
+
           </div>
+        `;
+      })
+      .join("");
 
-          <strong>$${itemTotal.toFixed(2)}</strong>
-        </div>
-      `;
-    })
-    .join("");
+    checkoutTotal.textContent =
+      `$${total.toFixed(2)}`;
 
-  checkoutTotal.textContent = `$${total.toFixed(2)}`;
+    checkoutSection.style.display = "block";
 
-  checkoutSection.style.display = "block";
-
-  checkoutSection.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
+    checkoutSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   });
-});
 
+// ================================
+// PLACE CUSTOMER ORDER
+// ================================
 
-// Place order
-document.querySelector(".checkout-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+document
+  .querySelector(".checkout-form")
+  ?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const form = e.target;
-  const message = document.querySelector(".checkout-message");
-  const submitButton = form.querySelector('button[type="submit"]');
+    const form = e.target;
 
-  const cart = getCart();
+    const message =
+      document.querySelector(".checkout-message") ||
+      form.querySelector(".form-message");
 
-  if (cart.length === 0) {
-    showToast("Cart is empty");
+    const submitButton =
+      form.querySelector('button[type="submit"]');
+
+    const cart = getCart();
+
+    if (cart.length === 0) {
+      showToast("Cart is empty");
+      return;
+    }
+
+    const formData = new FormData(form);
+
+    const customer = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      address: formData.get("address"),
+    };
+
+    const paymentMethod =
+      formData.get("paymentMethod");
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent =
+        "Placing Order...";
+    }
+
+    if (message) {
+      message.textContent = "";
+    }
+
+    try {
+      const res = await fetch(
+        `${API_URL}/orders`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify({
+            customer,
+            items: cart,
+            paymentMethod,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(
+          data.message ||
+            "Order failed"
+        );
+      }
+
+      // Clear cart only after successful API save
+      localStorage.removeItem(
+        "coffeeCart"
+      );
+
+      updateCartCount();
+      renderCart();
+
+      form.reset();
+
+      const checkoutItems =
+        document.querySelector(
+          ".checkout-items"
+        );
+
+      const checkoutTotal =
+        document.querySelector(
+          ".checkout-total"
+        );
+
+      if (checkoutItems) {
+        checkoutItems.innerHTML = "";
+      }
+
+      if (checkoutTotal) {
+        checkoutTotal.textContent =
+          "$0.00";
+      }
+
+      if (message) {
+        message.innerHTML = `
+          <strong>
+            Order placed successfully! ☕
+          </strong>
+          <br>
+          Thank you, ${customer.name}.
+          <br>
+          Order ID: ${data.order._id}
+        `;
+      }
+
+      showToast(
+        "Order placed successfully"
+      );
+    } catch (error) {
+      console.error(
+        "Checkout error:",
+        error
+      );
+
+      if (message) {
+        message.textContent =
+          error.message ||
+          "Unable to place order. Please try again.";
+      }
+
+      showToast("Order failed");
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent =
+          "Place Order";
+      }
+    }
+  });
+
+// ================================
+// TABLE BOOKING
+// ================================
+
+document
+  .querySelector(".booking-form")
+  ?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const message =
+      form.querySelector(
+        ".form-message"
+      );
+
+    const booking =
+      Object.fromEntries(
+        new FormData(form).entries()
+      );
+
+    try {
+      const res = await fetch(
+        `${API_URL}/bookings`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify(
+            booking
+          ),
+        }
+      );
+
+      const data =
+        await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(
+          data.message ||
+            "Booking failed"
+        );
+      }
+
+      if (message) {
+        message.textContent =
+          "Table booked successfully!";
+      }
+
+      form.reset();
+
+      showToast(
+        "Table booked successfully"
+      );
+    } catch (error) {
+      console.error(
+        "Booking error:",
+        error
+      );
+
+      if (message) {
+        message.textContent =
+          error.message ||
+          "Unable to book table.";
+      }
+
+      showToast("Booking failed");
+    }
+  });
+
+// ================================
+// ADMIN - ADD PRODUCT
+// ================================
+
+document
+  .querySelector(".admin-product-form")
+  ?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const message =
+      form.querySelector(
+        ".form-message"
+      );
+
+    const product =
+      Object.fromEntries(
+        new FormData(form).entries()
+      );
+
+    product.price =
+      Number(product.price);
+
+    try {
+      const res = await fetch(
+        `${API_URL}/products`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify(
+            product
+          ),
+        }
+      );
+
+      const data =
+        await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(
+          data.message ||
+            "Product add failed"
+        );
+      }
+
+      if (message) {
+        message.textContent =
+          "Product added successfully!";
+      }
+
+      form.reset();
+
+      showToast(
+        "Product added successfully"
+      );
+    } catch (error) {
+      console.error(
+        "Product error:",
+        error
+      );
+
+      if (message) {
+        message.textContent =
+          error.message ||
+          "Backend not connected.";
+      }
+    }
+  });
+
+// ================================
+// ADMIN - LOAD BOOKINGS
+// ================================
+
+async function loadAdminBookings() {
+  const box =
+    document.querySelector(
+      ".admin-bookings"
+    );
+
+  // Not admin page
+  if (!box) {
     return;
   }
 
-  const formData = new FormData(form);
-
-  const customer = {
-    name: formData.get("name"),
-    email: formData.get("email"),
-    phone: formData.get("phone"),
-    address: formData.get("address"),
-  };
-
-  const paymentMethod = formData.get("paymentMethod");
-
-  submitButton.disabled = true;
-  submitButton.textContent = "Placing Order...";
-
-  message.textContent = "";
+  box.innerHTML =
+    "<p>Loading bookings...</p>";
 
   try {
-    const res = await fetch(`${API_URL}/orders`, {
-      method: "POST",
+    const res = await fetch(
+      `${API_URL}/bookings`
+    );
 
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        customer,
-        items: cart,
-        paymentMethod,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      throw new Error(data.message || "Order failed");
+    if (!res.ok) {
+      throw new Error(
+        `HTTP ${res.status}`
+      );
     }
 
-    // Clear cart after successful order
-    localStorage.removeItem("coffeeCart");
+    const bookings =
+      await res.json();
 
-    updateCartCount();
-    renderCart();
+    if (
+      !Array.isArray(bookings) ||
+      bookings.length === 0
+    ) {
+      box.innerHTML =
+        "<p>No bookings yet.</p>";
 
-    form.reset();
-
-    document.querySelector(".checkout-items").innerHTML = "";
-    document.querySelector(".checkout-total").textContent = "$0";
-
-    message.innerHTML = `
-      <strong>Order placed successfully! ☕</strong><br>
-      Thank you, ${customer.name}.<br>
-      Order ID: ${data.order._id}
-    `;
-
-    showToast("Order placed successfully");
-
-  } catch (error) {
-    console.error("Checkout error:", error);
-
-    message.textContent =
-      error.message || "Unable to place order. Please try again.";
-
-    showToast("Order failed");
-
-  } finally {
-    submitButton.disabled = false;
-    submitButton.textContent = "Place Order";
-  }
-});
-
-  
-document.querySelector(".booking-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const form = e.target;
-  const message = form.querySelector(".form-message");
-  const booking = Object.fromEntries(new FormData(form).entries());
-
-  try {
-    const res = await fetch(`${API_URL}/bookings`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(booking),
-    });
-
-    const data = await res.json();
-    message.textContent = data.success ? "Table booked successfully!" : "Booking failed";
-    if (data.success) form.reset();
-  } catch (error) {
-    message.textContent = "Backend not connected. Start backend using npm run dev.";
-  }
-});
-
-document.querySelector(".admin-product-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const form = e.target;
-  const message = form.querySelector(".form-message");
-  const product = Object.fromEntries(new FormData(form).entries());
-  product.price = Number(product.price);
-
-  try {
-    const res = await fetch(`${API_URL}/products`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(product),
-    });
-
-    const data = await res.json();
-    message.textContent = data.success ? "Product added successfully!" : "Product add failed";
-    if (data.success) form.reset();
-  } catch (error) {
-    message.textContent = "Backend not connected.";
-  }
-});
-
-async function loadAdminBookings() {
-  const box = document.querySelector(".admin-bookings");
-  if (!box) return;
-
-  try {
-    const res = await fetch(`${API_URL}/bookings`);
-    const bookings = await res.json();
-
-    if (!bookings.length) {
-      box.innerHTML = "<p>No bookings yet.</p>";
       return;
     }
 
-    box.innerHTML = bookings.map((b) => `
-      <div class="admin-booking">
-        <strong>${b.name}</strong><br>
-        Phone: ${b.phone}<br>
-        Date: ${b.date} | Time: ${b.time}<br>
-        Guests: ${b.guests}<br><br>
+    box.innerHTML = bookings
+      .map((b) => {
+        return `
+          <div class="admin-booking">
 
-        <button class="delete-booking-btn" onclick="deleteBooking('${b._id}')">
-          Delete Booking
-        </button>
-      </div>
-    `).join("");
+            <strong>
+              ${b.name || "Unknown customer"}
+            </strong>
+
+            <br>
+
+            Phone:
+            ${b.phone || "N/A"}
+
+            <br>
+
+            Date:
+            ${b.date || "N/A"}
+
+            |
+
+            Time:
+            ${b.time || "N/A"}
+
+            <br>
+
+            Guests:
+            ${b.guests || "N/A"}
+
+            <br><br>
+
+            <button
+              type="button"
+              class="delete-booking-btn"
+              onclick="deleteBooking('${b._id}')"
+            >
+              Delete Booking
+            </button>
+
+          </div>
+        `;
+      })
+      .join("");
   } catch (error) {
-    box.innerHTML = "<p>Backend not connected.</p>";
-  }
+    console.error(
+      "Admin bookings error:",
+      error
+    );
 
-  async function loadAdminOrders() {
-  const box = document.querySelector(".admin-orders");
-  if (!box) return;
-
-  try {
-    const res = await fetch(`${API_URL}/orders`);
-    const orders = await res.json();
-
-    if (!orders.length) {
-      box.innerHTML = "<p>No orders yet.</p>";
-      return;
-    }
-
-    box.innerHTML = orders.map((order) => {
-      const items = order.items
-        .map(
-          (item) => `
-            <div class="admin-order-item">
-              <span>${item.name} × ${item.qty}</span>
-              <strong>$${(Number(item.price) * Number(item.qty)).toFixed(2)}</strong>
-            </div>
-          `
-        )
-        .join("");
-
-      return `
-        <div class="admin-order">
-
-          <div class="admin-order-header">
-            <div>
-              <strong>Order #${order._id.slice(-6).toUpperCase()}</strong>
-              <p>${new Date(order.createdAt).toLocaleString()}</p>
-            </div>
-
-            <span class="order-status">
-              ${order.status || "pending"}
-            </span>
-          </div>
-
-          <div class="admin-customer-details">
-            <p><strong>Customer:</strong> ${order.customer?.name || "N/A"}</p>
-            <p><strong>Email:</strong> ${order.customer?.email || "N/A"}</p>
-            <p><strong>Phone:</strong> ${order.customer?.phone || "N/A"}</p>
-            <p><strong>Address:</strong> ${order.customer?.address || "N/A"}</p>
-            <p><strong>Payment:</strong> ${order.paymentMethod || "N/A"}</p>
-          </div>
-
-          <div class="admin-order-items">
-            ${items}
-          </div>
-
-          <div class="admin-order-total">
-            Total:
-            <strong>$${Number(order.total || 0).toFixed(2)}</strong>
-          </div>
-
-        </div>
-      `;
-    }).join("");
-
-  } catch (error) {
-    console.error("Admin orders error:", error);
-    box.innerHTML = "<p>Unable to load orders.</p>";
+    box.innerHTML =
+      "<p>Unable to load bookings.</p>";
   }
 }
 
+// ================================
+// ADMIN - LOAD CUSTOMER ORDERS
+// ================================
 
+async function loadAdminOrders() {
+  const box =
+    document.querySelector(
+      ".admin-orders"
+    );
+
+  // Not admin page
+  if (!box) {
+    return;
+  }
+
+  box.innerHTML =
+    "<p>Loading customer orders...</p>";
+
+  try {
+    const res = await fetch(
+      `${API_URL}/orders`
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        `HTTP ${res.status}`
+      );
+    }
+
+    const orders =
+      await res.json();
+
+    if (
+      !Array.isArray(orders) ||
+      orders.length === 0
+    ) {
+      box.innerHTML =
+        "<p>No orders yet.</p>";
+
+      return;
+    }
+
+    box.innerHTML = orders
+      .map((order) => {
+        const orderItems =
+          Array.isArray(order.items)
+            ? order.items
+            : [];
+
+        const items =
+          orderItems
+            .map((item) => {
+              const price =
+                Number(
+                  item.price || 0
+                );
+
+              const qty =
+                Number(
+                  item.qty || 1
+                );
+
+              return `
+                <div class="admin-order-item">
+
+                  <span>
+                    ${item.name || "Product"}
+                    ×
+                    ${qty}
+                  </span>
+
+                  <strong>
+                    $${(
+                      price * qty
+                    ).toFixed(2)}
+                  </strong>
+
+                </div>
+              `;
+            })
+            .join("");
+
+        const orderId =
+          order._id
+            ? order._id
+                .slice(-6)
+                .toUpperCase()
+            : "N/A";
+
+        const orderDate =
+          order.createdAt
+            ? new Date(
+                order.createdAt
+              ).toLocaleString()
+            : "N/A";
+
+        return `
+          <div class="admin-order">
+
+            <div class="admin-order-header">
+
+              <div>
+
+                <strong>
+                  Order #${orderId}
+                </strong>
+
+                <p>
+                  ${orderDate}
+                </p>
+
+              </div>
+
+              <span class="order-status">
+                ${order.status || "pending"}
+              </span>
+
+            </div>
+
+            <div class="admin-customer-details">
+
+              <p>
+                <strong>Customer:</strong>
+                ${order.customer?.name || "N/A"}
+              </p>
+
+              <p>
+                <strong>Email:</strong>
+                ${order.customer?.email || "N/A"}
+              </p>
+
+              <p>
+                <strong>Phone:</strong>
+                ${order.customer?.phone || "N/A"}
+              </p>
+
+              <p>
+                <strong>Address:</strong>
+                ${order.customer?.address || "N/A"}
+              </p>
+
+              <p>
+                <strong>Payment:</strong>
+                ${order.paymentMethod || "N/A"}
+              </p>
+
+            </div>
+
+            <div class="admin-order-items">
+              ${items}
+            </div>
+
+            <div class="admin-order-total">
+
+              Total:
+
+              <strong>
+                $${Number(
+                  order.total || 0
+                ).toFixed(2)}
+              </strong>
+
+            </div>
+
+          </div>
+        `;
+      })
+      .join("");
+  } catch (error) {
+    console.error(
+      "Admin orders error:",
+      error
+    );
+
+    box.innerHTML =
+      "<p>Unable to load orders.</p>";
+  }
+}
+
+// ================================
+// ADMIN - DELETE BOOKING
+// ================================
 
 async function deleteBooking(id) {
-  const confirmDelete = confirm("Are you sure you want to delete this booking?");
+  const confirmDelete =
+    confirm(
+      "Are you sure you want to delete this booking?"
+    );
 
-  if (!confirmDelete) return;
+  if (!confirmDelete) {
+    return;
+  }
 
   try {
-    const res = await fetch(`${API_URL}/bookings/${id}`, {
-      method: "DELETE",
-    });
+    const res = await fetch(
+      `${API_URL}/bookings/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
 
-    const data = await res.json();
+    const data =
+      await res.json();
 
-    if (data.success) {
-      alert("Booking deleted successfully");
-      loadAdminBookings();
-    } else {
-      alert("Delete failed");
+    if (!res.ok || !data.success) {
+      throw new Error(
+        data.message ||
+          "Delete failed"
+      );
     }
+
+    alert(
+      "Booking deleted successfully"
+    );
+
+    loadAdminBookings();
   } catch (error) {
-    alert("Backend not connected");
+    console.error(
+      "Delete booking error:",
+      error
+    );
+
+    alert(
+      "Unable to delete booking"
+    );
   }
 }
 
-document.querySelectorAll(".filter-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
+// Make function available to onclick=""
+window.deleteBooking =
+  deleteBooking;
 
-    const filter = btn.dataset.filter;
-    document.querySelectorAll(".product-card").forEach((card) => {
-      const category = card.querySelector("p").textContent;
-      card.style.display = filter === "all" || category.includes(filter) ? "block" : "none";
-    });
+// ================================
+// PRODUCT FILTERS
+// ================================
+
+document
+  .querySelectorAll(".filter-btn")
+  .forEach((btn) => {
+    btn.addEventListener(
+      "click",
+      () => {
+        document
+          .querySelectorAll(
+            ".filter-btn"
+          )
+          .forEach((b) =>
+            b.classList.remove(
+              "active"
+            )
+          );
+
+        btn.classList.add(
+          "active"
+        );
+
+        const filter =
+          btn.dataset.filter;
+
+        document
+          .querySelectorAll(
+            ".product-card"
+          )
+          .forEach((card) => {
+            const categoryElement =
+              card.querySelector("p");
+
+            const category =
+              categoryElement
+                ? categoryElement.textContent
+                : "";
+
+            card.style.display =
+              filter === "all" ||
+              category.includes(filter)
+                ? "block"
+                : "none";
+          });
+      }
+    );
   });
-});
+
+// ================================
+// COUNTERS
+// ================================
 
 function runCounters() {
-  document.querySelectorAll(".counter").forEach((counter) => {
-    const target = Number(counter.dataset.target);
-    let count = 0;
-    const speed = Math.max(1, Math.floor(target / 100));
+  document
+    .querySelectorAll(".counter")
+    .forEach((counter) => {
+      const target =
+        Number(
+          counter.dataset.target
+        );
 
-    const update = () => {
-      count += speed;
-      if (count < target) {
-        counter.textContent = count;
-        requestAnimationFrame(update);
-      } else {
-        counter.textContent = target;
-      }
-    };
+      let count = 0;
 
-    update();
-  });
+      const speed =
+        Math.max(
+          1,
+          Math.floor(
+            target / 100
+          )
+        );
+
+      const update = () => {
+        count += speed;
+
+        if (count < target) {
+          counter.textContent =
+            count;
+
+          requestAnimationFrame(
+            update
+          );
+        } else {
+          counter.textContent =
+            target;
+        }
+      };
+
+      update();
+    });
 }
 
-updateCartCount();
-renderCart();
-loadAdminBookings();
-loadAdminOrders();
-runCounters();
+// ================================
+// INITIALIZE PAGE
+// ================================
+
+function initializePage() {
+  updateCartCount();
+
+  renderCart();
+
+  loadAdminBookings();
+
+  loadAdminOrders();
+
+  runCounters();
+}
+
+if (
+  document.readyState ===
+  "loading"
+) {
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializePage
+  );
+} else {
+  initializePage();
+}
+
+// Refresh cart if browser restores page
+window.addEventListener(
+  "pageshow",
+  () => {
+    updateCartCount();
+    renderCart();
+  }
+);
+
+// Keep cart synchronized between tabs
+window.addEventListener(
+  "storage",
+  (event) => {
+    if (
+      event.key ===
+      "coffeeCart"
+    ) {
+      updateCartCount();
+      renderCart();
+    }
+  }
+);
+
+// ================================
+// PROMO VIDEO SOUND
+// ================================
 
 function togglePromoSound() {
-  const video = document.getElementById("promoVideo");
-  const button = document.querySelector(".sound-btn");
+  const video =
+    document.getElementById(
+      "promoVideo"
+    );
+
+  const button =
+    document.querySelector(
+      ".sound-btn"
+    );
 
   if (!video) {
     alert("Video not found");
     return;
   }
 
-  video.muted = !video.muted;
+  video.muted =
+    !video.muted;
 
   if (video.muted) {
-    button.innerText = "🔇 Sound Off";
+    if (button) {
+      button.innerText =
+        "🔇 Sound Off";
+    }
   } else {
-    button.innerText = "🔊 Sound On";
+    if (button) {
+      button.innerText =
+        "🔊 Sound On";
+    }
+
     video.volume = 1;
-    video.play();
+
+    video
+      .play()
+      .catch((error) => {
+        console.error(
+          "Video play error:",
+          error
+        );
+      });
   }
 }
 
-}
+window.togglePromoSound =
+  togglePromoSound;
