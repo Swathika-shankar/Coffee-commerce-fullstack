@@ -218,7 +218,6 @@ function renderCart() {
   const cartItems = document.querySelector(".cart-items");
   const cartTotal = document.querySelector(".cart-total");
 
-  // We are not on cart.html
   if (!cartItems || !cartTotal) {
     return;
   }
@@ -234,7 +233,6 @@ function renderCart() {
     `;
 
     cartTotal.textContent = "$0.00";
-
     return;
   }
 
@@ -283,7 +281,6 @@ function renderCart() {
 
   cartTotal.textContent = `$${total.toFixed(2)}`;
 
-  // Remove buttons
   document.querySelectorAll(".remove-item").forEach((btn) => {
     btn.addEventListener("click", () => {
       const index = Number(btn.dataset.index);
@@ -413,8 +410,7 @@ document
 
     if (submitButton) {
       submitButton.disabled = true;
-      submitButton.textContent =
-        "Placing Order...";
+      submitButton.textContent = "Placing Order...";
     }
 
     if (message) {
@@ -428,8 +424,7 @@ document
           method: "POST",
 
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
 
           body: JSON.stringify({
@@ -444,15 +439,11 @@ document
 
       if (!res.ok || !data.success) {
         throw new Error(
-          data.message ||
-            "Order failed"
+          data.message || "Order failed"
         );
       }
 
-      // Clear cart only after successful API save
-      localStorage.removeItem(
-        "coffeeCart"
-      );
+      localStorage.removeItem("coffeeCart");
 
       updateCartCount();
       renderCart();
@@ -460,22 +451,17 @@ document
       form.reset();
 
       const checkoutItems =
-        document.querySelector(
-          ".checkout-items"
-        );
+        document.querySelector(".checkout-items");
 
       const checkoutTotal =
-        document.querySelector(
-          ".checkout-total"
-        );
+        document.querySelector(".checkout-total");
 
       if (checkoutItems) {
         checkoutItems.innerHTML = "";
       }
 
       if (checkoutTotal) {
-        checkoutTotal.textContent =
-          "$0.00";
+        checkoutTotal.textContent = "$0.00";
       }
 
       if (message) {
@@ -490,14 +476,9 @@ document
         `;
       }
 
-      showToast(
-        "Order placed successfully"
-      );
+      showToast("Order placed successfully");
     } catch (error) {
-      console.error(
-        "Checkout error:",
-        error
-      );
+      console.error("Checkout error:", error);
 
       if (message) {
         message.textContent =
@@ -509,8 +490,7 @@ document
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
-        submitButton.textContent =
-          "Place Order";
+        submitButton.textContent = "Place Order";
       }
     }
   });
@@ -527,9 +507,7 @@ document
     const form = e.target;
 
     const message =
-      form.querySelector(
-        ".form-message"
-      );
+      form.querySelector(".form-message");
 
     const booking =
       Object.fromEntries(
@@ -543,23 +521,18 @@ document
           method: "POST",
 
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
 
-          body: JSON.stringify(
-            booking
-          ),
+          body: JSON.stringify(booking),
         }
       );
 
-      const data =
-        await res.json();
+      const data = await res.json();
 
       if (!res.ok || !data.success) {
         throw new Error(
-          data.message ||
-            "Booking failed"
+          data.message || "Booking failed"
         );
       }
 
@@ -570,14 +543,9 @@ document
 
       form.reset();
 
-      showToast(
-        "Table booked successfully"
-      );
+      showToast("Table booked successfully");
     } catch (error) {
-      console.error(
-        "Booking error:",
-        error
-      );
+      console.error("Booking error:", error);
 
       if (message) {
         message.textContent =
@@ -601,9 +569,7 @@ document
     const form = e.target;
 
     const message =
-      form.querySelector(
-        ".form-message"
-      );
+      form.querySelector(".form-message");
 
     const product =
       Object.fromEntries(
@@ -620,23 +586,19 @@ document
           method: "POST",
 
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
 
-          body: JSON.stringify(
-            product
-          ),
+          body: JSON.stringify(product),
         }
       );
 
-      const data =
-        await res.json();
+      const data = await res.json();
 
       if (!res.ok || !data.success) {
         throw new Error(
           data.message ||
-            "Product add failed"
+          "Product add failed"
         );
       }
 
@@ -647,14 +609,9 @@ document
 
       form.reset();
 
-      showToast(
-        "Product added successfully"
-      );
+      showToast("Product added successfully");
     } catch (error) {
-      console.error(
-        "Product error:",
-        error
-      );
+      console.error("Product error:", error);
 
       if (message) {
         message.textContent =
@@ -670,11 +627,8 @@ document
 
 async function loadAdminBookings() {
   const box =
-    document.querySelector(
-      ".admin-bookings"
-    );
+    document.querySelector(".admin-bookings");
 
-  // Not admin page
   if (!box) {
     return;
   }
@@ -766,11 +720,8 @@ async function loadAdminBookings() {
 
 async function loadAdminOrders() {
   const box =
-    document.querySelector(
-      ".admin-orders"
-    );
+    document.querySelector(".admin-orders");
 
-  // Not admin page
   if (!box) {
     return;
   }
@@ -813,14 +764,10 @@ async function loadAdminOrders() {
           orderItems
             .map((item) => {
               const price =
-                Number(
-                  item.price || 0
-                );
+                Number(item.price || 0);
 
               const qty =
-                Number(
-                  item.qty || 1
-                );
+                Number(item.qty || 1);
 
               return `
                 <div class="admin-order-item">
@@ -924,6 +871,14 @@ async function loadAdminOrders() {
 
             </div>
 
+            <button
+              type="button"
+              class="delete-order-btn"
+              onclick="deleteOrder('${order._id}')"
+            >
+              Delete Order
+            </button>
+
           </div>
         `;
       })
@@ -961,13 +916,12 @@ async function deleteBooking(id) {
       }
     );
 
-    const data =
-      await res.json();
+    const data = await res.json();
 
     if (!res.ok || !data.success) {
       throw new Error(
         data.message ||
-          "Delete failed"
+        "Delete failed"
       );
     }
 
@@ -988,9 +942,59 @@ async function deleteBooking(id) {
   }
 }
 
-// Make function available to onclick=""
 window.deleteBooking =
   deleteBooking;
+
+// ================================
+// ADMIN - DELETE ORDER
+// ================================
+
+async function deleteOrder(id) {
+  const confirmDelete =
+    confirm(
+      "Are you sure you want to delete this order?"
+    );
+
+  if (!confirmDelete) {
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${API_URL}/orders/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(
+        data.message ||
+        "Delete failed"
+      );
+    }
+
+    alert(
+      "Order deleted successfully"
+    );
+
+    loadAdminOrders();
+  } catch (error) {
+    console.error(
+      "Delete order error:",
+      error
+    );
+
+    alert(
+      "Unable to delete order"
+    );
+  }
+}
+
+window.deleteOrder =
+  deleteOrder;
 
 // ================================
 // PRODUCT FILTERS
@@ -1003,26 +1007,18 @@ document
       "click",
       () => {
         document
-          .querySelectorAll(
-            ".filter-btn"
-          )
+          .querySelectorAll(".filter-btn")
           .forEach((b) =>
-            b.classList.remove(
-              "active"
-            )
+            b.classList.remove("active")
           );
 
-        btn.classList.add(
-          "active"
-        );
+        btn.classList.add("active");
 
         const filter =
           btn.dataset.filter;
 
         document
-          .querySelectorAll(
-            ".product-card"
-          )
+          .querySelectorAll(".product-card")
           .forEach((card) => {
             const categoryElement =
               card.querySelector("p");
@@ -1113,7 +1109,6 @@ if (
   initializePage();
 }
 
-// Refresh cart if browser restores page
 window.addEventListener(
   "pageshow",
   () => {
@@ -1122,7 +1117,6 @@ window.addEventListener(
   }
 );
 
-// Keep cart synchronized between tabs
 window.addEventListener(
   "storage",
   (event) => {
