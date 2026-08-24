@@ -441,7 +441,7 @@ async function loadAdminBookings() {
   }
 }
 
-}
+
 
 async function deleteBooking(id) {
   const confirmDelete = confirm("Are you sure you want to delete this booking?");
@@ -525,4 +525,4 @@ function togglePromoSound() {
   }
 }
 
-
+}
