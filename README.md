@@ -1,5 +1,7 @@
 # ☕ Brew3D Coffee Commerce Platform
 
+![Backend API Tests](https://github.com/Swathika-shankar/Coffee-commerce-fullstack/actions/workflows/backend-tests.yml/badge.svg)
+
 A full-stack coffee e-commerce and café management web application featuring an interactive 3D-inspired frontend, persistent shopping cart, customer checkout, table reservations, order management, and an administrative dashboard.
 
 Built with **HTML, CSS, JavaScript, Node.js, Express.js, MongoDB, and Mongoose**, the application demonstrates a complete frontend-to-backend commerce workflow and is deployed using Netlify and Render.
