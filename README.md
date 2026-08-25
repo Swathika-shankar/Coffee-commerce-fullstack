@@ -87,3 +87,7 @@ admin.html
 ![Contact Page](docs/screenshots/contact.png)
 
 ---
+
+
+### 👩‍💼 Admin Dashboard
+![Swa Cafe Admin Dashboard](docs/screenshots/admin-dashboard.png)
